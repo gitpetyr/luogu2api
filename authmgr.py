@@ -3,6 +3,7 @@ import re
 import fake_useragent
 import time
 import ddddocr
+import getpass
 
 ocr = ddddocr.DdddOcr(show_ad=False, beta=True)
 
@@ -29,5 +30,28 @@ def _login(username: str, password: str):
             "password": password,
             "captcha": ocr.classification(img)
         })
-        print(client.cookies)
-        print(response.json())
+        if response.status_code == 200:
+            return {"success": True, 
+                    "data": dict(client.cookies)}
+        try:
+            if response.json()['errorType'] == 'LuoguWeb\\Spilopelia\\Exception\\CaptchaNotMatchException':
+                return {"success": False, 
+                        "status_code": response.status_code,
+                        "message": "Captcha incorrect.",
+                        "error_type": "bad_captcha"}
+            elif response.json()['errorType'] == 'Symfony\\Component\\Security\\Core\\Exception\\BadCredentialsException':
+                return {"success": False, 
+                        "status_code": response.status_code,
+                        "message": "Credentials incorrect.",
+                        "error_type": "bad_credentials"}
+            return {"success": False, 
+                    "status_code": response.status_code,
+                    "message": response.json(),
+                    "error_type": "unknown"}
+        except Exception as e:
+            return {"success": False, 
+                    "status_code": response.status_code,
+                    "message": "no JSON message.", 
+                    "error_type": "no_json"}
+
+# print(_login("liveless", getpass.getpass("Password: ")))
