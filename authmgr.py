@@ -1,6 +1,7 @@
 import httpx
 import time
 import ddddocr
+# import getpass
 from utils import extract_csrf_token, random_ua
 
 ocr = ddddocr.DdddOcr(show_ad=False, beta=True)
@@ -45,4 +46,4 @@ def login(username: str, password: str):
                     "message": "no JSON message.", 
                     "error_type": "no_json"}
 
-# print(_login("liveless", getpass.getpass("Password: ")))
+# print(login("liveless", getpass.getpass("Password: ")))
