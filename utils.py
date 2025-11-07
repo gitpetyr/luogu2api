@@ -1,4 +1,4 @@
-import json
+import json, re, urllib.parse
 from bs4 import BeautifulSoup
 from typing import Optional, Dict, Any
 import fake_useragent
@@ -61,5 +61,47 @@ def extract_lentille_context(html_content: str) -> Optional[Dict[str, Any]]:
 
     except json.JSONDecodeError as e:
         raise ValueError(f"Json decoding failed: {e.msg}") from e
+    except Exception as e:
+        raise RuntimeError(f"An unexpected error occurred: {str(e)}") from e
+
+def extract_and_parse_fe_injection_regex(html_content: str):
+    """
+    使用正则表达式从给定的 HTML 内容中提取、解码并解析洛谷页面的 _feInjection 数据。
+
+    Args:
+        html_content (str): 包含 _feInjection 脚本的 HTML 字符串。
+
+    Returns:
+        tuple: 一个元组 (success, data_or_error_message)。
+               - success (bool): 操作是否成功。
+               - data_or_error_message (any or str):
+                 - 如果成功，返回解析后的 Python 对象（通常是字典）。
+                 - 如果失败，返回描述错误原因的字符串。
+    """
+    try:
+        # 正则表达式匹配: window._feInjection = JSON.parse(decodeURIComponent("...编码的JSON字符串..."));
+        # re.DOTALL 标志让 . 匹配包括换行符在内的所有字符
+        # 使用非贪婪匹配 (.*?) 捕获引号内的内容
+        pattern = r'window\._feInjection\s*=\s*JSON\.parse\(decodeURIComponent\(["\']([^"\']*)["\']\)\);'
+        match = re.search(pattern, html_content, re.DOTALL)
+
+        if not match:
+            raise ValueError("_feInjection pattern not found in HTML content.")
+
+        encoded_xxxxx = match.group(1)
+
+        # 解码 URL 编码的内容
+        try:
+            decoded_xxxxx = urllib.parse.unquote(encoded_xxxxx)
+        except UnicodeDecodeError as e:
+            raise ValueError(f"URL decoding failed: {e}") from e
+
+        # 解析 JSON 字符串为 Python 对象
+        try:
+            json_data = json.loads(decoded_xxxxx)
+            return json_data
+        except json.JSONDecodeError as e:
+            raise ValueError(f"JSON decoding failed: {e.msg}") from e
+
     except Exception as e:
         raise RuntimeError(f"An unexpected error occurred: {str(e)}") from e

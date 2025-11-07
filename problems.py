@@ -1,4 +1,4 @@
-from utils import extract_csrf_token, extract_lentille_context, random_ua
+from utils import *
 from typing import Optional, Dict, Any
 import httpx
 import time
@@ -151,4 +151,15 @@ def submit_problem(problemid: str, language: str, code: str, enableO2 : bool, co
 
         # 如果循环结束仍未返回，则抛出最后一次的错误信息
         raise RuntimeError(f"Submission failed after {max_captcha_retries} attempts: {last_json}")
-# print(craw_statement("P12198"))
+
+def craw_submit_info(rid: int, cookies: dict | None = None) -> Dict[str, Any] | None:
+    """
+    爬取洛谷提交状态页面并提取提交结果信息。
+    """
+    with httpx.Client(headers={"user-agent": random_ua()},
+                      cookies=cookies,
+                      follow_redirects=True) as client:
+        response = client.get(f"https://www.luogu.com.cn/record/{rid}")
+        response.raise_for_status()
+        # print(response.text)
+        return extract_and_parse_fe_injection_regex(response.text)
