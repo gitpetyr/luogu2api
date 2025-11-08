@@ -45,5 +45,3 @@ def login(username: str, password: str):
                     "status_code": response.status_code,
                     "message": "no JSON message.", 
                     "error_type": "no_json"}
-
-# print(login("liveless", getpass.getpass("Password: ")))
