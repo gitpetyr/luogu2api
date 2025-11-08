@@ -3,7 +3,6 @@ from typing import Optional, Dict, Any
 import httpx
 import time
 import ddddocr
-import getpass
 
 ocr = ddddocr.DdddOcr(show_ad=False, beta=True)
 
@@ -174,14 +173,27 @@ def craw_submission_status(rid: int, cookies: dict | None = None) -> Dict[str, A
     submit_info = craw_submission_info(rid, cookies)
     if submit_info is None:
         return None
+
+    # Helper to safely dig nested dict keys. Returns default if any key is missing or intermediate value is not a dict.
+    def dig(d: dict | None, *keys, default=None):
+        cur = d
+        for k in keys:
+            if not isinstance(cur, dict):
+                return default
+            if k not in cur:
+                return default
+            cur = cur[k]
+        return cur
+
     payload = {
-        "compileResult": submit_info['currentData']['record']['detail']['compileResult'],
-        "sourceCode": submit_info['currentData']['record']['sourceCode'],
-        "time": submit_info['currentData']['record']['time'],
-        "memory": submit_info['currentData']['record']['memory'],
-        "language": submit_info['currentData']['record']['language'],
-        "status": submit_info['currentData']['record']['status'],
-        "score": submit_info['currentData']['record']['score'],
-        "subtaskResults": submit_info['currentData']['record']['detail']['judgeResult']['subtasks'],
+        "compileResult": dig(submit_info, 'currentData', 'record', 'detail', 'compileResult', default=None),
+        "sourceCode": dig(submit_info, 'currentData', 'record', 'sourceCode', default=None),
+        "time": dig(submit_info, 'currentData', 'record', 'time', default=None),
+        "memory": dig(submit_info, 'currentData', 'record', 'memory', default=None),
+        "language": dig(submit_info, 'currentData', 'record', 'language', default=None),
+        "status": dig(submit_info, 'currentData', 'record', 'status', default=None),
+        "score": dig(submit_info, 'currentData', 'record', 'score', default=None),
+        # subtasks may be missing; return empty list as a sensible default
+        "subtaskResults": dig(submit_info, 'currentData', 'record', 'detail', 'judgeResult', 'subtasks', default=[]),
     }
     return payload
