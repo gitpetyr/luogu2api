@@ -81,7 +81,7 @@ def craw_statement(problemid: str, cookies: dict | None = None) -> Dict[str, Any
                     'hint' : probleminfo['data']['problem']['content']['hint'],
                     'attachments' : probleminfo['data']['problem']['attachments'],
                     'locale' : probleminfo['data']['problem']['content']['locale'],
-                    'translation' : probleminfo['data']['problem']['translation'],
+                    'translation' : probleminfo['data']['translations'],
                     'provider' : probleminfo['data']['problem']['provider']['uid'],
                     'tags': probleminfo['data']['problem']['tags'],
                     'title': probleminfo['data']['problem']['title'],
