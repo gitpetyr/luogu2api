@@ -26,14 +26,14 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 启动后，默认会在 `http://127.0.0.1:8000` 提供服务，FastAPI 自动生成的交互文档在：
 
-- Swagger UI: http://127.0.0.1:8000/docs
-- ReDoc: http://127.0.0.1:8000/redoc
+- Swagger UI: `/docs`
+- ReDoc: `/redoc`
 
 ## 常用 API 示例
 
 1) 登录（返回 cookies）
 
-POST /api/auth/login
+POST `/api/auth/login`
 
 请求示例（JSON）：
 
@@ -52,12 +52,12 @@ curl -X POST "http://127.0.0.1:8000/api/auth/login" \
 成功返回示例：
 
 ```json
-{ "success": true, "data": { /* cookies */ } }
+{ "success": true, "data": { "cookies" } }
 ```
 
 2) 获取题目信息
 
-GET /api/problem/{problem_id}
+GET `/api/problem/{problem_id}`
 
 示例：
 
@@ -67,11 +67,11 @@ curl "http://127.0.0.1:8000/api/problem/P1000"
 
 3) 获取题目描述
 
-GET /api/problem/{problem_id}/statement
+GET `/api/problem/{problem_id}/statement`
 
 4) 提交代码
 
-POST /api/problem/{problem_id}/submit
+POST `/api/problem/{problem_id}/submit`
 
 请求体（JSON）示例：
 
@@ -87,14 +87,14 @@ POST /api/problem/{problem_id}/submit
 
 5) 查询提交记录与评测状态
 
-- GET /api/record/{record_id}
-- GET /api/record/{record_id}/status
+- GET `/api/record/{record_id}`
+- GET `/api/record/{record_id}/status`
 
 6) 其它
 
-- GET /api/article/{article_id}
-- GET /api/paste/{paste_id}
-- GET /api/languages
+- GET `/api/article/{article_id}`
+- GET `/api/paste/{paste_id}`
+- GET `/api/languages`
 
 请以 `http://127.0.0.1:8000/docs` 中的接口文档为准，那里包含交互式说明与示例。
 
@@ -103,7 +103,7 @@ POST /api/problem/{problem_id}/submit
 - OCR（验证码识别）并非 100% 准确，可能导致登录或提交失败。
 - 通过爬取/解析洛谷页面实现功能，页面结构变化会导致部分接口失效。
 - 避免频繁、大量自动化请求。
-- 不要把 3K 惹毛了，到时候直接托管
+- 不要把 3K 惹毛了，到时候直接 reCAPTCHA 就老实了。
 
 ## 贡献
 
