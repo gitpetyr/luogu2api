@@ -12,6 +12,7 @@ from problems_mgr import (
     languages_map
 )
 from miscellaneous import craw_article, craw_paste
+from miscellaneous import punch
 
 app = FastAPI(
     title="洛谷API",
@@ -351,6 +352,33 @@ async def get_paste(
             detail="Paste not found"
         )
     return result
+
+
+@app.post("/api/punch",
+          summary="每日打卡",
+          description="使用登录后的 cookies 执行洛谷每日打卡，返回打卡结果",
+          response_description="包含打卡是否成功与相关数据的响应")
+async def api_punch(
+    cookies: Dict[str, str] = Depends(get_cookies)
+):
+    """
+    使用提供的 cookies 执行洛谷站点的每日打卡操作。
+
+    Args:
+        cookies (Dict[str, str]): 登录后的 cookies（JSON 字符串格式，通过 `cookies` 查询参数传入）
+
+    Returns:
+        Dict: 打卡结果，如果成功返回 `{"success": True, "data": ...}`，失败返回 HTTP 400 或 401。
+    """
+    if not cookies:
+        raise HTTPException(status_code=401, detail="Missing cookies")
+
+    result = punch(cookies)
+    # punch 返回形如 {"success": True/False, "data": ...} 或包含 error 字段
+    if isinstance(result, dict) and result.get("success"):
+        return result
+    # 若返回包含错误信息，包装成 HTTPException
+    raise HTTPException(status_code=400, detail=result)
 
 @app.get("/api/languages",
          summary="获取支持的编程语言列表",
