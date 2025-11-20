@@ -55,3 +55,23 @@ def craw_paste(id: str, cookies: dict | None = None) -> Dict[str, Any] | None:
     except KeyError:
         return None
     return payload
+
+def punch(cookies: dict) -> Dict[str, Any]:
+    """打卡"""
+    try:
+        with httpx.Client(headers={"user-agent": random_ua()},
+                        cookies=cookies,
+                        follow_redirects=True) as client:
+            response = client.get("https://www.luogu.com.cn/")
+            response.raise_for_status()
+            client.headers.update({
+                "x-csrf-token": extract_csrf_token(response.text)
+            })
+            response = client.post("https://www.luogu.com.cn/index/ajax_punch", headers={"referer": "https://www.luogu.com.cn/", "origin": "https://www.luogu.com.cn"})
+            response.raise_for_status()
+            data = response.json()
+            if data.get("code") == 200:
+                return {"success": True, "data": data.get("data", {})}
+            return {"success": False, "data": data}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
