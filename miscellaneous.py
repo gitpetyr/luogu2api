@@ -75,3 +75,12 @@ def punch(cookies: dict) -> Dict[str, Any]:
             return {"success": False, "data": data}
     except Exception as e:
         return {"success": False, "error": str(e)}
+    
+def craw_discuss(id : str, cookies: dict | None = None) -> Dict[str, Any] | None:
+    """爬取讨论区帖子的信息"""
+    with httpx.Client(headers={"user-agent": random_ua()},
+                      cookies=cookies,
+                      follow_redirects=True) as client:
+        response = client.get(f"https://www.luogu.com.cn/discuss/{id}")
+        response.raise_for_status()
+        return extract_lentille_context(response.text)
