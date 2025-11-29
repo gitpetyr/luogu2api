@@ -2,7 +2,7 @@ import httpx
 import time
 import ddddocr
 # import getpass
-from utils import extract_csrf_token, random_ua
+from craws.utils import extract_csrf_token, random_ua
 
 ocr = ddddocr.DdddOcr(show_ad=False, beta=True)
 

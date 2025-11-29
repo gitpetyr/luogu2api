@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException, Cookie, Query, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
-from authmgr import login
-from problems_mgr import (
+from craws.authmgr import login
+from craws.problems_mgr import (
     craw_probleminfo, 
     craw_statement, 
     submit_problem, 
@@ -11,8 +11,8 @@ from problems_mgr import (
     craw_submission_status,
     languages_map
 )
-from miscellaneous import craw_article, craw_paste
-from miscellaneous import punch
+from craws.miscellaneous import craw_article, craw_paste
+from craws.miscellaneous import punch
 
 app = FastAPI(
     title="洛谷API",
