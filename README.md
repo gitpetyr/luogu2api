@@ -1,4 +1,13 @@
-# luogu2api
+<div align="center">
+  <h1>luogu2api</h1>
+  <p>简体中文</p>
+  <p>
+    <img src="https://img.shields.io/badge/python-3.10+-blue" />
+    <img src="https://img.shields.io/badge/fastapi-latest-brightgreen" />
+    <img src="https://img.shields.io/github/last-commit/gitpetyr/luogu2api" />
+    <img src="https://img.shields.io/github/license/gitpetyr/luogu2api" />
+  </p>
+</div>
 
 一个非官方的洛谷（Luogu） API 服务，洛谷保存站的**轻量**公益实现。（感觉没甚屌用？qwq
 
